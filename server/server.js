@@ -8,7 +8,11 @@ import cors from "cors";
 const app = express();
 const PORT = 8000;
 
-app.use(cors());
+// Update the CORS options to allow requests from frontend
+const corsOptions = {
+    origin: ["http://localhost:5173"], // Include the frontend URL
+  };
+app.use(cors(corsOptions));
 
 const upload = multer({ dest: "uploads/" });
 

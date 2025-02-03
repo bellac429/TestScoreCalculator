@@ -17,16 +17,16 @@ function App() {
 
       console.log(formData)
 
-      // try {
-      //     const response = await axios.post("http://localhost:8000/upload", formData, {
-      //         headers: { "Content-Type": "multipart/form-data" },
-      //     });
+      try {
+          const response = await axios.post("http://localhost:8000/upload", formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+          });
 
-      //     setMedian(response.data.median);
-      //     setScores(response.data.scores || []);
-      // } catch (error) {
-      //     console.error("Error uploading file:", error);
-      // }
+          setMedian(response.data.median);
+          setScores(response.data.scores || []);
+      } catch (error) {
+          console.error("Error uploading file:", error);
+      }
   };
 
 
