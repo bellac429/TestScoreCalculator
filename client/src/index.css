@@ -71,3 +71,14 @@ button:focus-visible {
 .app {
   padding: 6rem;
 }
+
+.hero {
+  margin-bottom: 4rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
