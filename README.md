@@ -3,9 +3,8 @@
 ## **Dev TO DO**
 
 ### Frontend
-* Add select input for different tests: Fastbridge, Dibbels, CBM
-* Add grade level select input, use MUI materials
+* Add PDF export function later
 
 ### Backend
-* Debug file upload post requests
+* Debug file upload post requests and generate results
 
