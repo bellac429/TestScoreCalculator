@@ -3,8 +3,9 @@
 ## **Dev TO DO**
 
 ### Frontend
-* Add PDF export function later
+* Add PDF export function
+* Debug useState after Upload Again button
 
 ### Backend
-* Debug file upload post requests and generate results
+* add more data functions later
 
