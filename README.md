@@ -4,7 +4,7 @@
 
 ### Frontend
 * Add PDF export function
-* Debug useState after Upload Again button
+* Add function to clear states for onClick in Upload Again button
 
 ### Backend
 * add more data functions later
