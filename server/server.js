@@ -15,14 +15,18 @@ const corsOptions = {
   };
 app.use(cors(corsOptions));
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "uploads/" }); // get file data
 
 
 app.post("/upload", upload.single("file"), (req, res) => {
-    console.log("recieved upload request")
+    console.log("recieved upload request");
+    const fileName = req.file.originalname;
+    
+    // data needed for calculation
+    const { gradeLevel, testName } = req.body;
     const filePath = req.file.path;
     const extension = req.file.originalname.split(".").pop();
-    console.log("file path: ", filePath, "extension: ", extension)
+    console.log("file path: ", filePath, "extension: ", extension, "file name: ", fileName, "test name: ", testName, "grade level: ", gradeLevel);
 
     let scores = [];
 
@@ -42,7 +46,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
                 const median = calculateMedian(scores)
                 console.log("median: ", median)
 
-                res.json({ median: median, scores: scores });
+                res.json({ fileName: fileName, testName: testName, gradeLevel: gradeLevel, median: median, scores: scores });
             });
 
     } else if (extension === "xlsx") {
@@ -63,7 +67,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
         const median = calculateMedian(scores)
         console.log("median: ", median)
 
-        res.json({ median: median, scores: scores });
+        res.json({ fileName: fileName, testName: testName, gradeLevel: gradeLevel, median: median, scores: scores });
     } else {
         fs.unlinkSync(filePath);
         res.status(400).json({ error: "Invalid file format" });
