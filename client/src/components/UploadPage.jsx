@@ -12,10 +12,12 @@ const UploadPage = () => {
     const [file, setFile] = useState(null);
     const [test, setTest] = useState("");
     const [gradeLevel, setGradeLevel] = useState("");
+    const [season, setSeason] = useState("");
 
     const handleFileChange = (event) => {setFile(event.target.files[0]); console.log("file changed to ", event.target.files[0])};
     const handleTestChange = (event) => {setTest(event.target.value); console.log("test changed to ", event.target.value)};
     const handleGradeLevelChange = (event) => {setGradeLevel(event.target.value); console.log("grade level changed to ", event.target.value)}; 
+    const handleSeasonChange = (event) => {setSeason(event.target.value); console.log("setting season to ", event.target.value)}
 
     const handleUpload = async () => {
         if (!file) return alert("Please select a file.");
@@ -25,6 +27,7 @@ const UploadPage = () => {
         formData.append("file", file);
         formData.append("testName", test);
         formData.append("gradeLevel", gradeLevel);
+        (season) && formData.append("season", season) // append season data if not null
 
         console.log("form data: ") // Print form data
         for (const pair of formData.entries()) {
@@ -62,7 +65,7 @@ const UploadPage = () => {
                         >
                             <MenuItem value="Fastbridge">Fastbridge</MenuItem>
                             <MenuItem value="DIBELS">DIBELS</MenuItem>
-                            <MenuItem value="CBM">CBM</MenuItem>
+                            <MenuItem value="CBM">easyCBM</MenuItem>
                         </Select>
                         <FormHelperText>Select test</FormHelperText>
                     </FormControl>
@@ -86,10 +89,57 @@ const UploadPage = () => {
                         </Select>
                         <FormHelperText>Select grade level</FormHelperText>
                     </FormControl>
+
+                    {
+                        (test === "Fastbridge" || test === "CBM") ? (
+                        <FormControl sx={{ m: 1, minWidth: 80 }} fullWidth>
+                            <InputLabel id="season-label">Season</InputLabel>
+                            <Select
+                                labelId="season-label"
+                                id="season"
+                                value={season}
+                                label="Season"
+                                onChange={handleSeasonChange}
+                                required
+                            >
+                                <MenuItem value="Fall">Fall</MenuItem>
+                                <MenuItem value="Winter">Winter</MenuItem>
+                                <MenuItem value="Spring">Spring</MenuItem>
+                            </Select>
+                            <FormHelperText>Select season</FormHelperText>
+                        </FormControl>) : (<></>)
+                    }
     
-                    <label > Upload CSV or EXCEL file
+                    <label > Upload a CSV or EXCEL file
                         <input type="file" onChange={handleFileChange} style={{ marginLeft: "1em"}}/>
                     </label>
+
+                    <article>
+                        The upload file should contain the following rows for each test:
+                        <hr></hr>
+                        <span style={{ fontWeight: "bold" }}>Fastbridge</span>
+                        <ul>
+                            <li>User</li>
+                            <li>A column for each assessment's scores (aReading, CBMreading and earlyReading)</li>
+                            <li>Grade (KG-9)</li>
+                            <li>Time (Fall, Winter, Spring)</li>
+                        </ul>
+
+                        <span style={{ fontWeight: "bold" }}>DIBELS</span>
+                        <ul>
+                            <li>User</li>
+                            <li>Composite Score (Doesn't need an assessment column)</li>
+                            <li>Grade (KG-8)</li>
+                        </ul>
+
+                        <span style={{ fontWeight: "bold" }}>easyCBM</span>
+                        <ul>
+                            <li>User</li>
+                            <li>A column for each assessment's scores (Basic Reading, Proficient Reading)</li>
+                            <li>Grade (2-8)</li>
+                            <li>Time (Fall, Winter, Spring)</li>
+                        </ul>
+                    </article>
                     
                     <button onClick={handleUpload}>Upload</button>
                 </div>

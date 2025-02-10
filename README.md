@@ -1,14 +1,15 @@
 # Test Score Calculator Web App
 User Documentation:
-    User must select the test name and grade level before uploading a .csv or .xlsx file containing data under the "Scores" column. After clicking upload a graph and pdf export of the data is provided.
+    User must select the test name and grade level before uploading a .csv or .xlsx file containing data. 
 
 ## **Dev TO DO**
-
 ### Frontend
-* Design ResultsPage and add PDF export function
+* Design ResultsPage according to backend results for each test
+* add PDF export function
 * Change upload button to only allow csv and excel formats
 * Test to make sure test and grade-level fields are required
 
 ### Backend
-* add more data functions later
+* recieve season value from form data
+* analyze earlyCBM and Fastbridge data from frontend
 
