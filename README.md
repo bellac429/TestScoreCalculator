@@ -7,7 +7,6 @@ User Documentation:
 * Design ResultsPage according to backend results for each test
 * add PDF export function
 * Change upload button to only allow csv and excel formats
-* Test to make sure test and grade-level fields are required
 
 ### Backend
 * recieve season value from form data
