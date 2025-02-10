@@ -12,4 +12,5 @@ User Documentation:
 ### Backend
 * recieve season value from form data
 * analyze earlyCBM and Fastbridge data from frontend
+* Info located at: Z:\Programming Team\Core DBDM
 
