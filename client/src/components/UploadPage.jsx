@@ -14,10 +14,10 @@ const UploadPage = () => {
     const [gradeLevel, setGradeLevel] = useState("");
     const [season, setSeason] = useState("");
 
-    const handleFileChange = (event) => {setFile(event.target.files[0]); console.log("file changed to ", event.target.files[0])};
-    const handleTestChange = (event) => {setTest(event.target.value); console.log("test changed to ", event.target.value)};
-    const handleGradeLevelChange = (event) => {setGradeLevel(event.target.value); console.log("grade level changed to ", event.target.value)}; 
-    const handleSeasonChange = (event) => {setSeason(event.target.value); console.log("setting season to ", event.target.value)}
+    const handleFileChange = (event) => {setFile(event.target.files[0]);};
+    const handleTestChange = (event) => {setTest(event.target.value);};
+    const handleGradeLevelChange = (event) => {setGradeLevel(event.target.value);}; 
+    const handleSeasonChange = (event) => {setSeason(event.target.value);}
 
     const handleUpload = async () => {
         if (!file) return alert("Please select a file.");
@@ -35,7 +35,7 @@ const UploadPage = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:8000/upload", formData, {
+            const response = await axios.post("http://localhost:8080/upload", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
@@ -111,7 +111,7 @@ const UploadPage = () => {
                     }
     
                     <label > Upload a CSV or EXCEL file
-                        <input type="file" onChange={handleFileChange} style={{ marginLeft: "1em"}}/>
+                        <input type="file" name="inputFile" onChange={handleFileChange} style={{ marginLeft: "1em"}}/>
                     </label>
 
                     <article>

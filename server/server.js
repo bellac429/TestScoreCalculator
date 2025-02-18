@@ -1,79 +1,62 @@
-import express from "express";
-import multer from "multer";
-import csvParser from "csv-parser";
-import xlsx from "xlsx";
-import fs from "fs";
-import cors from "cors";
+import Papa from "papaparse";
+import express from "express"
+import cors from "cors"
+import multer from "multer"
+import xlsx from "xlsx"
 import { calculateMedian } from "./utils";
 
 const app = express();
-const PORT = 8000;
+const PORT = 8080;
 
-// Update the CORS options to allow requests from frontend
-const corsOptions = {
-    origin: ["http://localhost:5173", "localhost:5173"], // Include the frontend URL
-  };
-app.use(cors(corsOptions));
+// Enable CORS for frontend at https://localhost:5173
+app.use(cors({ origin: 'http://localhost:5173' }));
 
-const upload = multer({ dest: "uploads/" }); // get file data
+// Configure Multer to store files in memory
+const upload = multer({ storage: multer.memoryStorage() });
 
-
-app.post("/upload", upload.single("file"), (req, res) => {
-    console.log("recieved upload request");
-    const fileName = req.file.originalname;
-    
-    // data needed for calculation
+app.post('/upload', upload.single('file'), (req, res) => {
+    console.log("recieved upload request")
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+    if (req.body.season) { const {season} = req.body}
     const { gradeLevel, testName } = req.body;
-    const filePath = req.file.path;
-    const extension = req.file.originalname.split(".").pop();
-    console.log("file path: ", filePath, "extension: ", extension, "file name: ", fileName, "test name: ", testName, "grade level: ", gradeLevel);
 
+    const fileBuffer = req.file.buffer;
+    const fileExt = req.file.originalname.split('.').pop().toLowerCase();
     let scores = [];
 
-    if (extension === "csv") {
-        console.log("inside csv process")
-        
-        fs.createReadStream(filePath)
-            .pipe(csvParser())
-            .on("data", (row) => {
-                const score = parseFloat(row["Score"]); // Adjust column name if needed
-                if (!isNaN(score)) scores.push(score);
-            })
-            .on("end", () => {
-                fs.unlinkSync(filePath);
+    try {
+        if (fileExt === 'csv') {
+            const fileContent = fileBuffer.toString('utf8');
+            const parsedData = Papa.parse(fileContent, { header: true }).data;
+            scores = parsedData.map(row => row['Scores']).filter(score => score !== undefined);
 
-                console.log("scores: ", scores)
-                const median = calculateMedian(scores)
-                console.log("median: ", median)
+        } else if (fileExt === 'xls' || fileExt === 'xlsx') {
+            const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
+            const sheetName = workbook.SheetNames[0];
+            const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            scores = sheetData.map(row => row['Scores']).filter(score => score !== undefined);
 
-                res.json({ fileName: fileName, testName: testName, gradeLevel: gradeLevel, median: median, scores: scores });
-            });
+        } else {
+            return res.status(400).json({ error: 'Invalid file type' });
+        }
 
-    } else if (extension === "xlsx") {
-        console.log("inside xlsx process")
-        const workbook = xlsx.readFile(filePath);
+        // Return data based on metrics
+        if (scores) {
+            const median = calculateMedian(scores)
+            res.json({ scores, median, testName, gradeLevel });
+        } else {
+            res.status(500).json({ error: 'Error processing file' });
+        }
 
-        const sheetName = workbook.SheetNames[0];
-        console.log("sheet name: ", sheetName)
-
-        const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        console.log("data: ", data)
-
-        scores = data.map((row) => parseFloat(row["Score"])).filter((n) => !isNaN(n));
-    
-        fs.unlinkSync(filePath);
-
-        console.log("scores: ", scores)
-        const median = calculateMedian(scores)
-        console.log("median: ", median)
-
-        res.json({ fileName: fileName, testName: testName, gradeLevel: gradeLevel, median: median, scores: scores });
-    } else {
-        fs.unlinkSync(filePath);
-        res.status(400).json({ error: "Invalid file format" });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error processing file' });
     }
+
 });
 
 
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});

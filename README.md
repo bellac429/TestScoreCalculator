@@ -9,7 +9,6 @@ User Documentation:
 * Change upload button to only allow csv and excel formats
 
 ### Backend
-* recieve season value from form data
 * analyze earlyCBM and Fastbridge data from frontend
 * Info located at: Z:\Programming Team\Core DBDM
 
