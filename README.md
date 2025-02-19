@@ -9,6 +9,10 @@ User Documentation:
 * Change upload button to only allow csv and excel formats
 
 ### Backend
-* analyze earlyCBM and Fastbridge data from frontend
-* Info located at: Z:\Programming Team\Core DBDM
+* analyze test scores: info located at: Z:\Programming Team\Core DBDM
+    - easyCBM: add grades 3-8 in lookup table for Basic Reading
+        - create Proficient Reading lookupTable in folder
+
+
+
 

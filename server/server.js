@@ -30,12 +30,14 @@ app.post('/upload', upload.single('file'), (req, res) => {
         if (fileExt === 'csv') {
             const fileContent = fileBuffer.toString('utf8');
             const parsedData = Papa.parse(fileContent, { header: true }).data;
+            console.log(parsedData)
             scores = parsedData.map(row => row['Scores']).filter(score => score !== undefined);
 
         } else if (fileExt === 'xls' || fileExt === 'xlsx') {
             const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            console.log("excel data:", JSON.stringify(sheetData))
             scores = sheetData.map(row => row['Scores']).filter(score => score !== undefined);
 
         } else {

@@ -15,7 +15,20 @@ export function calculateMedian(scores) {
     }
 }
 
-// Example usage:
-// const scores = [85, 90, 72, 88, 93, 77, 80];
-// const median = calculateMedian(scores);
-// console.log("Median:", median); // Output: Median: 85
+// Function to retrieve percentile based on grade, score, and season
+function getPercentile(score, grade, season, lookupTable) {
+    if (lookupTable.hasOwnProperty(grade) && lookupTable[grade].hasOwnProperty(score)) {
+        return lookupTable[grade][score][season.toLowerCase()];
+    } else {
+        return null; // Handle missing scores or grades
+    }
+}
+
+// Function to process the sheet data and add percentiles
+function addPercentiles(sheetData, lookupTable, season) {
+    return sheetData.map(entry => ({
+        ...entry,
+        "Basic Reading Percentile": getPercentile(entry["Basic Reading"], entry["Grade"], season, lookupTable),
+        "Proficient Reading Percentile": getPercentile(entry["Proficient Reading"], entry["Grade"], season, lookupTable)
+    }));
+}
