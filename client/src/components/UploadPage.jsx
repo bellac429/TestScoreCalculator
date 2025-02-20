@@ -27,8 +27,13 @@ const UploadPage = () => {
         formData.append("file", file);
         formData.append("testName", test);
         formData.append("gradeLevel", gradeLevel);
-        (season) && formData.append("season", season) // append season data if not null
-
+        // Season data needs to be included with easyCBM or Fastbridge data
+        if (test === "easyCBM" && !season || test === "Fastbridge" && !season ) {
+            alert("must select a season")
+        } else {
+            (season) && formData.append("season", season) // append season data if not null
+        }
+        
         console.log("form data: ") // Print form data
         for (const pair of formData.entries()) {
             console.log(pair[0], pair[1]);
@@ -91,7 +96,7 @@ const UploadPage = () => {
                     </FormControl>
 
                     {
-                        (test === "Fastbridge" || test === "CBM") ? (
+                        (test === "Fastbridge" || test === "easyCBM") ? (
                         <FormControl sx={{ m: 1, minWidth: 80 }} fullWidth>
                             <InputLabel id="season-label">Season</InputLabel>
                             <Select
@@ -147,5 +152,7 @@ const UploadPage = () => {
             </div>
     );
 };
+
+
 
 export default UploadPage;

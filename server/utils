@@ -19,7 +19,7 @@ export function calculateMedian(scores) {
 }
 
 // Function to retrieve percentile based on grade, score, and season
-export function getPercentile(score, grade, season, lookupTable) {
+export function getCBMPercentile(score, grade, season, lookupTable) {
     if (!lookupTable.hasOwnProperty(grade)) return null; // If grade is missing
 
     const gradeTable = lookupTable[grade];
@@ -31,11 +31,11 @@ export function getPercentile(score, grade, season, lookupTable) {
 }
 
 // Function to process the sheet data and add percentiles
-export function addPercentiles(sheetData, lookupTable, season) {
+export function addCBMPercentiles(sheetData, brLookupTable, prLookupTable, grade, season) {
     return sheetData.map(entry => ({
         ...entry,
-        "Basic Reading Percentile": getPercentile(entry["Basic Reading"], entry["Grade"], season, lookupTable),
-        "Proficient Reading Percentile": getPercentile(entry["Proficient Reading"], entry["Grade"], season, lookupTable)
+        "Basic Reading Percentile": getCBMPercentile(entry["Basic Reading"], grade, season, brLookupTable),
+        "Proficient Reading Percentile": getCBMPercentile(entry["Proficient Reading"], entry["Grade"], season, prLookupTable)
     }));
 }
 

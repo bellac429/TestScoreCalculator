@@ -4,14 +4,14 @@ User Documentation:
 
 ## **Dev TO DO**
 ### Frontend
-* Design ResultsPage according to backend results for each test
+* Design ResultsPage according to backend results for each test -> easyCBM first
 * add PDF export function
 * Change upload button to only allow csv and excel formats
 
 ### Backend
 * analyze test scores: info located at: Z:\Programming Team\Core DBDM
-    - easyCBM: add grades 3-8 in lookup table for Basic Reading
-        - create Proficient Reading lookupTable in folder
+    - easyCBM: return specified basic reading and proficient reading data
+    - start Fastbridge analyzing
 
 
 

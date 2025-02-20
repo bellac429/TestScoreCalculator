@@ -3,7 +3,9 @@ import express from "express"
 import cors from "cors"
 import multer from "multer"
 import xlsx from "xlsx"
-import { calculateMedian } from "./utils";
+import { calculateMedian, addCBMPercentiles } from "./utils";
+import basicReadingLookup from './lookupTables/basicReading.js'
+import profReadingLookup from './lookupTables/profReading.js';
 
 const app = express();
 const PORT = 8080;
@@ -20,8 +22,10 @@ app.post('/upload', upload.single('file'), (req, res) => {
         return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    if (req.body.season) { const {season} = req.body}
+    let season = ""
+    if (req.body.season) { season = req.body.season; console.log("season: ", season)}
     const { gradeLevel, testName } = req.body;
+    console.log(`grade: ${gradeLevel}, test name; ${testName}`)
 
     const fileBuffer = req.file.buffer;
     const fileExt = req.file.originalname.split('.').pop().toLowerCase();
@@ -35,15 +39,18 @@ app.post('/upload', upload.single('file'), (req, res) => {
             scores = parsedData.map(row => row['Scores']).filter(score => score !== undefined);
 
         } else if (fileExt === 'xls' || fileExt === 'xlsx') {
+            console.log('inside excel process')
             const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
             console.log("excel data:", JSON.stringify(sheetData))
 
             // Process easyCBM data with lookup tables
-            // if (testName === "easyCBM") {
-
-            // }
+            if (testName === "easyCBM") {
+                console.log('inside easyCBM process')
+                const updatedSheetData = addCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
+                console.log("updated Sheet data: ", JSON.stringify(updatedSheetData))
+            }
 
             scores = sheetData.map(row => row['Scores']).filter(score => score !== undefined);
 
