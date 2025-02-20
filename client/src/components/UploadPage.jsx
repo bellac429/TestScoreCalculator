@@ -65,7 +65,7 @@ const UploadPage = () => {
                         >
                             <MenuItem value="Fastbridge">Fastbridge</MenuItem>
                             <MenuItem value="DIBELS">DIBELS</MenuItem>
-                            <MenuItem value="CBM">easyCBM</MenuItem>
+                            <MenuItem value="easyCBM">easyCBM</MenuItem>
                         </Select>
                         <FormHelperText>Select test</FormHelperText>
                     </FormControl>

@@ -1,3 +1,6 @@
+import basicReadingLookup from './lookupTables/basicReading.js'
+import profReadingLookup from './lookupTables/profReading.js';
+
 export function calculateMedian(scores) {
     // First, sort the array in ascending order
     scores.sort((a, b) => a - b);
@@ -16,19 +19,32 @@ export function calculateMedian(scores) {
 }
 
 // Function to retrieve percentile based on grade, score, and season
-function getPercentile(score, grade, season, lookupTable) {
-    if (lookupTable.hasOwnProperty(grade) && lookupTable[grade].hasOwnProperty(score)) {
-        return lookupTable[grade][score][season.toLowerCase()];
-    } else {
-        return null; // Handle missing scores or grades
-    }
+export function getPercentile(score, grade, season, lookupTable) {
+    if (!lookupTable.hasOwnProperty(grade)) return null; // If grade is missing
+
+    const gradeTable = lookupTable[grade];
+
+    if (score < 0 || score >= gradeTable.length) return null; // If score is out of range
+
+    const seasonIndex = { fall: 1, winter: 2, spring: 3 }[season.toLowerCase()];
+    return gradeTable[score][seasonIndex] ?? null; // Return percentile or null if not found
 }
 
 // Function to process the sheet data and add percentiles
-function addPercentiles(sheetData, lookupTable, season) {
+export function addPercentiles(sheetData, lookupTable, season) {
     return sheetData.map(entry => ({
         ...entry,
         "Basic Reading Percentile": getPercentile(entry["Basic Reading"], entry["Grade"], season, lookupTable),
         "Proficient Reading Percentile": getPercentile(entry["Proficient Reading"], entry["Grade"], season, lookupTable)
     }));
 }
+
+//console.log('basic reading percentile: ', getPercentile(15, 3, "Fall", basicReadingLookup))
+//console.log('prof reading percentile', getPercentile(17, 3, "Winter", profReadingLookup))
+
+
+// Example usage
+// const season = "Fall"; // Change to "Winter" or "Spring" as needed
+// const updatedSheetData = addPercentiles(sheetData, basicReadingLookup, season);
+
+// console.log(updatedSheetData);

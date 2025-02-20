@@ -19,6 +19,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
+
     if (req.body.season) { const {season} = req.body}
     const { gradeLevel, testName } = req.body;
 
@@ -38,6 +39,12 @@ app.post('/upload', upload.single('file'), (req, res) => {
             const sheetName = workbook.SheetNames[0];
             const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
             console.log("excel data:", JSON.stringify(sheetData))
+
+            // Process easyCBM data with lookup tables
+            // if (testName === "easyCBM") {
+
+            // }
+
             scores = sheetData.map(row => row['Scores']).filter(score => score !== undefined);
 
         } else {
