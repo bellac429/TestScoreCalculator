@@ -1,5 +1,5 @@
-import basicReadingLookup from './lookupTables/basicReading.js'
-import profReadingLookup from './lookupTables/profReading.js';
+import basicReadingLookup from './lookupTables/easyCBM/basicReading.js'
+import profReadingLookup from './lookupTables/easyCBM/profReading.js';
 
 export function calculateMedian(scores) {
     // First, sort the array in ascending order

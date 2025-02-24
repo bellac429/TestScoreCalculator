@@ -4,8 +4,8 @@ import cors from "cors"
 import multer from "multer"
 import xlsx from "xlsx"
 import { calculateMedian, addCBMPercentiles, getCBMPercentile } from "./utils";
-import basicReadingLookup from './lookupTables/basicReading.js'
-import profReadingLookup from './lookupTables/profReading.js';
+import basicReadingLookup from './lookupTables/easyCBM/basicReading.js'
+import profReadingLookup from './lookupTables/easyCBM/profReading.js';
 
 const app = express();
 const PORT = 8080;
