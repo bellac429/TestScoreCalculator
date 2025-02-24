@@ -30,7 +30,7 @@ export function getCBMPercentile(score, grade, season, lookupTable) {
     return gradeTable[score][seasonIndex] ?? null; // Return percentile or null if not found
 }
 
-// Function to process the sheet data and add percentiles
+// Function to process the sheet data and add percentiles based on lookup tables
 export function addCBMPercentiles(sheetData, brLookupTable, prLookupTable, grade, season) {
     return sheetData.map(entry => ({
         ...entry,

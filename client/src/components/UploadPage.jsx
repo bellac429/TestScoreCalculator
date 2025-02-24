@@ -44,7 +44,7 @@ const UploadPage = () => {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            console.log("response", response)
+            console.log("response data", JSON.stringify(response.data))
             setData(response.data); // set median and test data for results
             navigate("/results")
         } catch (error) {

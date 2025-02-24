@@ -3,7 +3,7 @@ import express from "express"
 import cors from "cors"
 import multer from "multer"
 import xlsx from "xlsx"
-import { calculateMedian, addCBMPercentiles } from "./utils";
+import { calculateMedian, addCBMPercentiles, getCBMPercentile } from "./utils";
 import basicReadingLookup from './lookupTables/basicReading.js'
 import profReadingLookup from './lookupTables/profReading.js';
 
@@ -48,25 +48,40 @@ app.post('/upload', upload.single('file'), (req, res) => {
             // Process easyCBM data with lookup tables
             if (testName === "easyCBM") {
                 console.log('inside easyCBM process')
-                const updatedSheetData = addCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
-                console.log("updated Sheet data: ", JSON.stringify(updatedSheetData))
+
+                let basicReadingScores = sheetData.map(row => row['Basic Reading']).filter(brscore => brscore !== undefined); // get basic reading scores
+                let profReadingScores = sheetData.map(row => row['Proficient Reading']).filter(prscore => prscore !== undefined); // get proficient reading scores
+                console.log("basic reading scores: ", basicReadingScores, "\n prof reading scores: ", profReadingScores)
+
+                const basicReadingMedian = calculateMedian(basicReadingScores)
+                const profReadingMedian = calculateMedian(profReadingScores)
+
+                // getCBMPercentile(score, grade, season, lookupTable)
+                const brMedianPercentile = getCBMPercentile(basicReadingMedian, gradeLevel, season, basicReadingLookup)
+                const prMedianPercentile = getCBMPercentile(profReadingMedian, gradeLevel, season, profReadingLookup)
+                console.log("basic reading median: ", brMedianPercentile, "\n prof reading median: ", prMedianPercentile)
+
+                if (brMedianPercentile && prMedianPercentile) {
+                    res.json({ testName, gradeLevel, brMedianPercentile, prMedianPercentile, basicReadingScores, profReadingScores });
+                } else if (brMedianPercentile && !prMedianPercentile) {
+                    res.json({ testName, gradeLevel, brMedianPercentile, basicReadingScores });
+                } else if (prMedianPercentile && !brMedianPercentile) {
+                    res.json({ testName, gradeLevel, prMedianPercentile, profReadingScores });
+                } 
+                // add percentiles to sheet data if needed:
+                //const updatedSheetData = addCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
+                //console.log("updated Sheet data: ", JSON.stringify(updatedSheetData))
             }
 
-            scores = sheetData.map(row => row['Scores']).filter(score => score !== undefined);
+    
 
         } else {
+            console.log('invalid file type')
             return res.status(400).json({ error: 'Invalid file type' });
         }
 
-        // Return data based on metrics
-        if (scores) {
-            const median = calculateMedian(scores)
-            res.json({ scores, median, testName, gradeLevel });
-        } else {
-            res.status(500).json({ error: 'Error processing file' });
-        }
-
     } catch (error) {
+        console.log('error processing file', error)
         return res.status(500).json({ error: 'Error processing file' });
     }
 
