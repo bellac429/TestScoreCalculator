@@ -4,7 +4,13 @@ User Documentation:
 
 ## **Dev TO DO**
 ### Frontend
-* Design ResultsPage according to backend results for each test -> easyCBM first
+
+- Can we spit this out using our branding template (for logos/header/footers/font) for now? I've saved a template in the folder on the lss.
+- Add the median score, not just the percentile that it’s in
+- I’m not sure a line graph makes sense here, let’s just make a line for the percentiles and mark the percentile that they are in on it (using a symbol)
+This will make more sense for the tests where we know what certain percentiles mean
+
+
 * add PDF export function
 * Change upload button to only allow csv and excel formats
 

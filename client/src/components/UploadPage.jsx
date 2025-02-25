@@ -55,6 +55,7 @@ const UploadPage = () => {
 
     return (
         <div className="app">
+            <div className="container" />
                 <h1 className="hero">Analyze Test Scores</h1>
     
                 <div className="form">
@@ -147,9 +148,9 @@ const UploadPage = () => {
                     </article>
                     
                     <button onClick={handleUpload}>Upload</button>
-                </div>
-                
+                    
             </div>
+        </div>
     );
 };
 
