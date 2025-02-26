@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { InputLabel, MenuItem, FormControl, Select, FormHelperText, Button } from "@mui/material"
 import { useNavigate } from 'react-router-dom';
 import { DataContext } from "../DataProvider";
+import IRRCimg from '../assets/IRRCBrand.jpg'
 
 
 const UploadPage = () => {
@@ -55,8 +56,11 @@ const UploadPage = () => {
 
     return (
         <div className="app">
-            <div className="container" />
-                <h1 className="hero">Analyze Test Scores</h1>
+            <div className="upload-container">
+                <header>
+                    <img src={IRRCimg} alt='Iowa Reading Research Center Image' height={60} width={300}/>   
+                </header>
+                <h1 className="upload-hero center">Analyze Test Scores</h1>
     
                 <div className="form">
                     <FormControl sx={{ m: 1, minWidth: 80 }} fullWidth>
@@ -116,10 +120,27 @@ const UploadPage = () => {
                         </FormControl>) : (<></>)
                     }
     
-                    <label > Upload a CSV or EXCEL file
+                    <label > Upload an EXCEL file
                         <input type="file" name="inputFile" onChange={handleFileChange} style={{ marginLeft: "1em"}}/>
                     </label>
 
+
+                    
+                    <button onClick={handleUpload}>Upload</button>
+                </div> 
+            </div>
+        </div>
+    );
+};
+
+
+
+export default UploadPage;
+
+
+
+
+/*
                     <article>
                         The upload file should contain the following rows for each test:
                         <hr></hr>
@@ -146,14 +167,5 @@ const UploadPage = () => {
                             <li>Time (Fall, Winter, Spring)</li>
                         </ul>
                     </article>
-                    
-                    <button onClick={handleUpload}>Upload</button>
-                    
-            </div>
-        </div>
-    );
-};
 
-
-
-export default UploadPage;
+*/

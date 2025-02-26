@@ -9,8 +9,15 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
   margin: 0;
-  min-height: 100vh;
+  padding: 0;
+}  
+
+.center {
+  text-align: center;
 }
 
 a {
@@ -58,40 +65,6 @@ button:focus-visible {
   }
 }
 
-.app {
-  margin: 0 auto;
-  padding: 20px;
-  background-color: darkgray;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.container {
-  background-color: white;
-  min-width: 50%;
-  min-height: 8rem;
-}
-
-header {
-  display: flex;
-  justify-content: flex-start;
-  padding: 20px 0 0 72px;
-}
-
-main {
-  padding-left: 70px;
-}
-
-.hero {
-  text-align: left;
-  font-family: "Antonio", serif;
-  font-optical-sizing: auto;
-  font-weight: normal;
-  font-style: normal;
-  margin-bottom: 2rem;
-}
-
 .roboto-body {
   font-size: 1.4rem;
   font-family: "Roboto", serif;
@@ -113,6 +86,57 @@ main {
     "wdth" 100;
 }
 
+.app {
+  margin: 0;
+  background-color: #251F08;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.results-container {
+  background-color: #FFFFFF;
+  min-width: 70%;
+  margin: 50px;
+}
+
+.upload-container {
+  background-color: #FFFFFF;
+  padding: 50px;
+  border-radius: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: flex-start;
+  padding: 20px 0 0 72px;
+}
+
+main {
+  padding-left: 70px;
+}
+
+.hero {
+  text-align: left;
+  font-family: "Antonio", serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+  margin-bottom: 2rem;
+}
+
+.upload-hero {
+  text-align: center;
+  font-family: "Antonio", serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+  margin: 30px 40px 50px 50px;
+}
+
+
+
 .form {
   display: flex;
   flex-direction: column;
@@ -126,9 +150,10 @@ main {
   justify-content: space-around;
 }
 
-.data-section{
-  min-height: 500px;
+.data-container {
   display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
+  align-items: center;
   min-width: fit-content;
 }

@@ -48,6 +48,11 @@ app.post('/upload', upload.single('file'), (req, res) => {
             // Process easyCBM data with lookup tables
             if (testName === "easyCBM") {
                 console.log('inside easyCBM process')
+                const brPercentiles = [0,25];
+                let prPercentiles;
+                if (gradeLevel === 2) {
+                    prPercentiles = [0,12]
+                } else { prPercentiles = [0,20] }
 
                 let basicReadingScores = sheetData.map(row => row['Basic Reading']).filter(brscore => brscore !== undefined); // get basic reading scores
                 let profReadingScores = sheetData.map(row => row['Proficient Reading']).filter(prscore => prscore !== undefined); // get proficient reading scores
@@ -62,11 +67,11 @@ app.post('/upload', upload.single('file'), (req, res) => {
                 console.log("basic reading median: ", brMedianPercentile, "\n prof reading median: ", prMedianPercentile)
 
                 if (brMedianPercentile && prMedianPercentile) {
-                    res.json({ testName, gradeLevel, season, basicReadingMedian, profReadingMedian, brMedianPercentile, prMedianPercentile, basicReadingScores, profReadingScores });
+                    res.json({ testName, gradeLevel, season, basicReadingMedian, profReadingMedian, brMedianPercentile, prMedianPercentile, basicReadingScores, profReadingScores, brPercentiles, prPercentiles });
                 } else if (brMedianPercentile && !prMedianPercentile) {
-                    res.json({ testName, gradeLevel, season, basicReadingMedian, brMedianPercentile, basicReadingScores });
+                    res.json({ testName, gradeLevel, season, basicReadingMedian, brMedianPercentile, basicReadingScores, brPercentiles });
                 } else if (prMedianPercentile && !brMedianPercentile) {
-                    res.json({ testName, gradeLevel, season, profReadingMedian, prMedianPercentile, profReadingScores });
+                    res.json({ testName, gradeLevel, season, profReadingMedian, prMedianPercentile, profReadingScores, prPercentiles });
                 } 
                 // add percentiles to sheet data if needed:
                 //const updatedSheetData = addCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
