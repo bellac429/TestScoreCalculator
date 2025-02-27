@@ -66,6 +66,10 @@ app.post('/upload', upload.single('file'), (req, res) => {
                 const prMedianPercentile = getCBMPercentile(profReadingMedian, gradeLevel, season, profReadingLookup)
                 console.log("basic reading median: ", brMedianPercentile, "\n prof reading median: ", prMedianPercentile)
 
+                // add percentiles to sheet data if needed:
+                // const updatedSheetData = addCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
+                // console.log("updated Sheet data: ", JSON.stringify(updatedSheetData))
+
                 if (brMedianPercentile && prMedianPercentile) {
                     res.json({ testName, gradeLevel, season, basicReadingMedian, profReadingMedian, brMedianPercentile, prMedianPercentile, basicReadingScores, profReadingScores, brPercentiles, prPercentiles });
                 } else if (brMedianPercentile && !prMedianPercentile) {
@@ -73,9 +77,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
                 } else if (prMedianPercentile && !brMedianPercentile) {
                     res.json({ testName, gradeLevel, season, profReadingMedian, prMedianPercentile, profReadingScores, prPercentiles });
                 } 
-                // add percentiles to sheet data if needed:
-                //const updatedSheetData = addCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
-                //console.log("updated Sheet data: ", JSON.stringify(updatedSheetData))
+
             }
 
     
