@@ -10,11 +10,12 @@ User Documentation:
 
 * add PDF export function
 * Change upload button to only allow csv and excel formats
+* Add auto width to form inputs maybe
 
 ### Backend
 * analyze test scores: info located at: Z:\Programming Team\Core DBDM
-    - easyCBM: return specified basic reading and proficient reading data
-    - start Fastbridge analyzing
+    - finish Fastbridge lookupTables
+    - send analyzed fastbridge data to frontend
 
 
 

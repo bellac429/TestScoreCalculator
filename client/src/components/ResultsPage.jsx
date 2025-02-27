@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Label } from "recharts";
 import { DataContext } from "../DataProvider";
 import IRRCimg from '../assets/IRRCBrand.jpg'
 import EasyCBMSection from './easyCBMSection';
@@ -45,13 +44,4 @@ const ResultsPage = () => {
 };
 
 
-/*
-                    <LineChart width={500} height={300} data={data.scores.map((score, index) => ({ index, score }))}>
-                        <XAxis dataKey="index" />
-                        <YAxis />
-                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="score" stroke="#8884d8" />
-                    </LineChart>
-*/
 export default ResultsPage;

@@ -29,6 +29,8 @@ export function getCBMPercentile(score, grade, season, lookupTable) {
     const seasonIndex = { fall: 1, winter: 2, spring: 3 }[season.toLowerCase()];
     return gradeTable[score][seasonIndex] ?? null; // Return percentile or null if not found
 }
+//console.log('basic reading percentile: ', getPercentile(15, 3, "Fall", basicReadingLookup))
+//console.log('prof reading percentile', getPercentile(17, 3, "Winter", profReadingLookup))
 
 // Function to process the sheet data and add percentiles based on lookup tables
 export function addCBMPercentiles(sheetData, brLookupTable, prLookupTable, grade, season) {
@@ -38,13 +40,123 @@ export function addCBMPercentiles(sheetData, brLookupTable, prLookupTable, grade
         "Proficient Reading Percentile": getCBMPercentile(entry["Proficient Reading"], entry["Grade"], season, prLookupTable)
     }));
 }
-
-//console.log('basic reading percentile: ', getPercentile(15, 3, "Fall", basicReadingLookup))
-//console.log('prof reading percentile', getPercentile(17, 3, "Winter", profReadingLookup))
-
-
 // Example usage
 // const season = "Fall"; // Change to "Winter" or "Spring" as needed
 // const updatedSheetData = addPercentiles(sheetData, basicReadingLookup, season);
-
 // console.log(updatedSheetData);
+
+const lookupTable = `
+
+CBMreading WRCPM 1 1 0 1 4
+CBMreading WRCPM 1 2 1 3 7
+CBMreading WRCPM 1 3 1 5 9
+CBMreading WRCPM 1 4 2 6 11
+CBMreading WRCPM 1 5 2 7 13
+CBMreading WRCPM 1 6 3 8 15
+CBMreading WRCPM 1 7 3 9 17
+CBMreading WRCPM 1 8 4 10 18
+CBMreading WRCPM 1 9 4 11 20
+CBMreading WRCPM 1 10 4 12 22
+CBMreading WRCPM 1 11 5 13 24
+CBMreading WRCPM 1 12 5 14 25
+CBMreading WRCPM 1 13 6 14 27
+CBMreading WRCPM 1 14 6 15 29
+CBMreading WRCPM 1 15 6 16 30
+CBMreading WRCPM 1 16 6 17 31
+CBMreading WRCPM 1 17 7 17 33
+CBMreading WRCPM 1 18 7 18 35
+CBMreading WRCPM 1 19 7 19 36
+CBMreading WRCPM 1 20 8 20 38
+CBMreading WRCPM 1 21 8 20 39
+CBMreading WRCPM 1 22 8 21 41
+CBMreading WRCPM 1 23 8 22 42
+CBMreading WRCPM 1 24 9 23 44
+CBMreading WRCPM 1 25 9 24 45
+CBMreading WRCPM 1 26 9 24 47
+CBMreading WRCPM 1 27 10 25 48
+CBMreading WRCPM 1 28 10 26 50
+CBMreading WRCPM 1 29 10 27 51
+CBMreading WRCPM 1 30 10 27 53
+CBMreading WRCPM 1 31 11 28 54
+CBMreading WRCPM 1 32 11 29 56
+CBMreading WRCPM 1 33 11 30 57
+CBMreading WRCPM 1 34 12 31 59
+CBMreading WRCPM 1 35 12 32 60
+CBMreading WRCPM 1 36 12 33 61
+CBMreading WRCPM 1 37 13 34 63
+CBMreading WRCPM 1 38 13 35 64
+CBMreading WRCPM 1 39 13 36 65
+CBMreading WRCPM 1 40 14 37 66
+CBMreading WRCPM 1 41 14 38 67
+CBMreading WRCPM 1 42 15 39 68
+CBMreading WRCPM 1 43 15 40 69
+CBMreading WRCPM 1 44 16 41 70
+CBMreading WRCPM 1 45 16 41 71
+CBMreading WRCPM 1 46 17 43 72
+CBMreading WRCPM 1 47 18 44 73
+CBMreading WRCPM 1 48 19 45 74
+CBMreading WRCPM 1 49 19 46 75
+CBMreading WRCPM 1 50 20 48 76
+CBMreading WRCPM 1 51 20 49 77
+CBMreading WRCPM 1 52 21 51 78
+CBMreading WRCPM 1 53 22 52 79
+CBMreading WRCPM 1 54 22 54 80
+CBMreading WRCPM 1 55 23 55 81
+CBMreading WRCPM 1 56 24 57 82
+CBMreading WRCPM 1 57 25 58 83
+CBMreading WRCPM 1 58 26 60 84
+CBMreading WRCPM 1 59 27 61 84
+CBMreading WRCPM 1 60 28 62 85
+CBMreading WRCPM 1 61 29 63 86
+CBMreading WRCPM 1 62 30 64 88
+CBMreading WRCPM 1 63 31 65 89
+CBMreading WRCPM 1 64 33 67 90
+CBMreading WRCPM 1 65 34 68 91
+CBMreading WRCPM 1 66 36 69 92
+CBMreading WRCPM 1 67 37 70 93
+CBMreading WRCPM 1 68 39 72 94
+CBMreading WRCPM 1 69 41 73 95
+CBMreading WRCPM 1 70 42 74 97
+CBMreading WRCPM 1 71 44 76 98
+CBMreading WRCPM 1 72 46 77 99
+CBMreading WRCPM 1 73 48 78 101
+CBMreading WRCPM 1 74 51 80 102
+CBMreading WRCPM 1 75 53 81 104
+CBMreading WRCPM 1 76 55 82 105
+CBMreading WRCPM 1 77 57 84 107
+CBMreading WRCPM 1 78 59 85 108
+CBMreading WRCPM 1 79 61 86 110
+CBMreading WRCPM 1 80 63 88 112
+CBMreading WRCPM 1 81 65 90 113
+CBMreading WRCPM 1 82 67 91 115
+CBMreading WRCPM 1 83 70 93 117
+CBMreading WRCPM 1 84 72 95 119
+CBMreading WRCPM 1 85 73 97 121
+CBMreading WRCPM 1 86 76 99 124
+CBMreading WRCPM 1 87 78 101 126
+CBMreading WRCPM 1 88 81 104 128
+CBMreading WRCPM 1 89 83 107 131
+CBMreading WRCPM 1 90 86 110 133
+CBMreading WRCPM 1 91 90 113 137
+CBMreading WRCPM 1 92 93 115 141
+CBMreading WRCPM 1 93 97 119 143
+CBMreading WRCPM 1 94 102 124 147
+CBMreading WRCPM 1 95 108 128 151
+CBMreading WRCPM 1 96 114 133 157
+CBMreading WRCPM 1 97 124 140 161
+CBMreading WRCPM 1 98 136 147 170
+CBMreading WRCPM 1 99 152 159 184
+
+
+`;
+
+const formattedArray = lookupTable.split('\n')
+  .filter(line => line.trim() !== '') // Remove empty lines
+  .map(line => {
+    const parts = line.trim().split(' ');
+    const lastFour = parts.slice(-4).map(Number); // Get last four items as numbers
+    return `        [${lastFour.join(', ')}],`;
+  });
+
+console.log(formattedArray.join('\n'));
+
