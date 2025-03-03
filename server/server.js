@@ -1,11 +1,14 @@
-import Papa from "papaparse";
+//import Papa from "papaparse";
 import express from "express"
 import cors from "cors"
 import multer from "multer"
 import xlsx from "xlsx"
-import { calculateMedian, addCBMPercentiles, getCBMPercentile } from "./utils";
+import { getMedian, addCBMPercentiles, getPercentile } from "./utils.js";
 import basicReadingLookup from './lookupTables/easyCBM/basicReading.js'
 import profReadingLookup from './lookupTables/easyCBM/profReading.js';
+import aReadingLookup from "./lookupTables/Fastbridge/aReading.js";
+import cbmReadingLookup from "./lookupTables/Fastbridge/cbmReading.js";
+import earlyReadingLookup from "./lookupTables/Fastbridge/earlyReading.js";
 
 const app = express();
 const PORT = 8080;
@@ -32,20 +35,15 @@ app.post('/upload', upload.single('file'), (req, res) => {
     let scores = [];
 
     try {
-        if (fileExt === 'csv') {
-            const fileContent = fileBuffer.toString('utf8');
-            const parsedData = Papa.parse(fileContent, { header: true }).data;
-            console.log(parsedData)
-            scores = parsedData.map(row => row['Scores']).filter(score => score !== undefined);
 
-        } else if (fileExt === 'xls' || fileExt === 'xlsx') {
+        if (fileExt === 'xls' || fileExt === 'xlsx') {
             console.log('inside excel process')
             const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
             console.log("excel data:", JSON.stringify(sheetData))
 
-            // Process easyCBM data with lookup tables
+            // Process easyCBM data with lookup tables in project folder
             if (testName === "easyCBM") {
                 console.log('inside easyCBM process')
                 const brPercentiles = [0,25];
@@ -58,12 +56,12 @@ app.post('/upload', upload.single('file'), (req, res) => {
                 let profReadingScores = sheetData.map(row => row['Proficient Reading']).filter(prscore => prscore !== undefined); // get proficient reading scores
                 console.log("basic reading scores: ", basicReadingScores, "\n prof reading scores: ", profReadingScores)
 
-                const basicReadingMedian = calculateMedian(basicReadingScores)
-                const profReadingMedian = calculateMedian(profReadingScores)
+                const basicReadingMedian = getMedian(basicReadingScores)
+                const profReadingMedian = getMedian(profReadingScores)
 
                 // getCBMPercentile(score, grade, season, lookupTable)
-                const brMedianPercentile = getCBMPercentile(basicReadingMedian, gradeLevel, season, basicReadingLookup)
-                const prMedianPercentile = getCBMPercentile(profReadingMedian, gradeLevel, season, profReadingLookup)
+                const brMedianPercentile = getPercentile(basicReadingMedian, gradeLevel, season, basicReadingLookup)
+                const prMedianPercentile = getPercentile(profReadingMedian, gradeLevel, season, profReadingLookup)
                 console.log("basic reading median: ", brMedianPercentile, "\n prof reading median: ", prMedianPercentile)
 
                 // add percentiles to sheet data if needed:
@@ -78,6 +76,21 @@ app.post('/upload', upload.single('file'), (req, res) => {
                     res.json({ testName, gradeLevel, season, profReadingMedian, prMedianPercentile, profReadingScores, prPercentiles });
                 } 
 
+            }
+
+            if (testName === "Fastbridge") {
+                console.log('inside Fastbridge process')
+                const fbPercentiles = [1,99];
+
+                // if the grade level is kindergarten, get aReading and earlyReading scores for Fastbridge lookup tables
+                if (gradeLevel === 0) {
+                    let aReadingScores = sheetData.map(row => row['aReading']).filter(score => score !== undefined); 
+                    let earlyReadingScores = sheetData.map(row => row['earlyReading']).filter(score => score !== undefined); 
+                    const aReadingMedian = getMedian(aReadingScores)
+                    const earlyReadingMedian = getMedian(earlyReadingScores)
+                    const aReadingMedPercentile = getPercentile(aReadingMedian, gradeLevel, season, aReadingLookup)
+                    const earlyReadingMedPercentile = getPercentile(aReadingMedian, gradeLevel, season, aReadingLookup)
+                }
             }
 
     
@@ -98,3 +111,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
+
+
+/*  CSV Proccessing
+    if (fileExt === 'csv') {
+        const fileContent = fileBuffer.toString('utf8');
+        const parsedData = Papa.parse(fileContent, { header: true }).data;
+        console.log(parsedData)
+        scores = parsedData.map(row => row['Scores']).filter(score => score !== undefined);
+
+*/

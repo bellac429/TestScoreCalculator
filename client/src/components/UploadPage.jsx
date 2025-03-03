@@ -90,12 +90,16 @@ const UploadPage = () => {
                             onChange={handleGradeLevelChange}
                             required
                         >
-                            <MenuItem value="K">K</MenuItem>
+                            <MenuItem value="0">K</MenuItem>
                             <MenuItem value="1">1</MenuItem>
                             <MenuItem value="2">2</MenuItem>
                             <MenuItem value="3">3</MenuItem>
                             <MenuItem value="4">4</MenuItem>
                             <MenuItem value="5">5</MenuItem>
+                            {test === "Fastbridge" && <MenuItem value="6">6</MenuItem>}
+                            {test === "Fastbridge" && <MenuItem value="7">7</MenuItem>}
+                            {test === "Fastbridge" && <MenuItem value="8">8</MenuItem>}
+                            {test === "Fastbridge" && <MenuItem value="9">9</MenuItem>}
                         </Select>
                         <FormHelperText>Select grade level</FormHelperText>
                     </FormControl>

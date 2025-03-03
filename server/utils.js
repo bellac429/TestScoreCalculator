@@ -1,7 +1,8 @@
 import basicReadingLookup from './lookupTables/easyCBM/basicReading.js'
 import profReadingLookup from './lookupTables/easyCBM/profReading.js';
 
-export function calculateMedian(scores) {
+export function getMedian(scores) {
+    if (!scores) {return null}
     // First, sort the array in ascending order
     scores.sort((a, b) => a - b);
 
@@ -19,8 +20,8 @@ export function calculateMedian(scores) {
 }
 
 // Function to retrieve percentile based on grade, score, and season
-export function getCBMPercentile(score, grade, season, lookupTable) {
-    if (!lookupTable.hasOwnProperty(grade)) return null; // If grade is missing
+export function getPercentile(score, grade, season, lookupTable) {
+    if (!lookupTable.hasOwnProperty(grade) || !score) return null; // If grade is missing
 
     const gradeTable = lookupTable[grade];
 
@@ -36,8 +37,8 @@ export function getCBMPercentile(score, grade, season, lookupTable) {
 export function addCBMPercentiles(sheetData, brLookupTable, prLookupTable, grade, season) {
     return sheetData.map(entry => ({
         ...entry,
-        "Basic Reading Percentile": getCBMPercentile(entry["Basic Reading"], grade, season, brLookupTable),
-        "Proficient Reading Percentile": getCBMPercentile(entry["Proficient Reading"], entry["Grade"], season, prLookupTable)
+        "Basic Reading Percentile": getPercentile(entry["Basic Reading"], grade, season, brLookupTable),
+        "Proficient Reading Percentile": getPercentile(entry["Proficient Reading"], entry["Grade"], season, prLookupTable)
     }));
 }
 // Example usage

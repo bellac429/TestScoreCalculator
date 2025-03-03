@@ -1,5 +1,5 @@
 /* FastBridge earlyReading assessment score to percentile lookup tables  */
-// Grades KG-9
+// Grades KG-1
 /* Grade:
         |_______|_______Percentile______|
         | Score | Fall | Winter | Spring|
