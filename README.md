@@ -5,7 +5,7 @@ User Documentation:
 ## **Dev TO DO**
 ### Frontend
 
-- Idea (Talk in next meeting): make a histograph of how many students are in each percentile in the class
+- Idea: make a histograph of how many students are in each percentile in the class
     * Maybe send sheetData back as object and create one large barChart
 
 * add PDF export function
@@ -18,5 +18,6 @@ User Documentation:
     - send analyzed fastbridge data to frontend
 
 
-
+### Notes for Meeting
+- earlyReading only has KG and grade 1 for Fastbridge percentiles
 
