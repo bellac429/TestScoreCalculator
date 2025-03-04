@@ -13,9 +13,7 @@ User Documentation:
 * Add auto width to form inputs maybe
 
 ### Backend
-* analyze test scores: info located at: Z:\Programming Team\Core DBDM
-    - finish Fastbridge lookupTables
-    - send analyzed fastbridge data to frontend
+* write get ScaleScore range function for fastbridge test to send ranges to backend
 
 
 ### Notes for Meeting
