@@ -3,7 +3,7 @@ import express from "express"
 import cors from "cors"
 import multer from "multer"
 import xlsx from "xlsx"
-import { getMedian, addCBMPercentiles, getPercentile } from "./utils.js";
+import { getMedian, addEasyCBMPercentiles, getEasyCBMPercentile } from "./utils.js";
 import basicReadingLookup from './lookupTables/easyCBM/basicReading.js'
 import profReadingLookup from './lookupTables/easyCBM/profReading.js';
 import aReadingLookup from "./lookupTables/Fastbridge/aReading.js";
@@ -44,8 +44,8 @@ app.post('/upload', upload.single('file'), (req, res) => {
             console.log('inside excel process')
             const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
-            const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-            console.log("excel data:", JSON.stringify(sheetData))
+            let sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            console.log("excel data:", JSON.stringify(sheetData, null, 2))
 
             // Process easyCBM data with lookup tables in project folder
             if (testName === "easyCBM") {
@@ -62,18 +62,20 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
                 const basicReadingMedian = getMedian(basicReadingScores)
                 const profReadingMedian = getMedian(profReadingScores)
+                console.log("basic reading median: ", basicReadingMedian, "prof reading median: ", profReadingMedian)
+
 
                 // getCBMPercentile(score, grade, season, lookupTable)
-                const brMedianPercentile = getPercentile(testName, basicReadingMedian, gradeLevel, season, basicReadingLookup)
-                const prMedianPercentile = getPercentile(testName, profReadingMedian, gradeLevel, season, profReadingLookup)
-                console.log("basic reading median: ", brMedianPercentile, "\n prof reading median: ", prMedianPercentile)
+                const brMedianPercentile = getEasyCBMPercentile(Math.round(basicReadingMedian), gradeLevel, season, basicReadingLookup)
+                const prMedianPercentile = getEasyCBMPercentile(Math.round(profReadingMedian), gradeLevel, season, profReadingLookup)
+                console.log("basic reading median perc: ", brMedianPercentile, "\n prof reading median perc: ", prMedianPercentile)
 
                 // add percentiles to sheet data if needed:
-                // const updatedSheetData = addCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
-                // console.log("updated Sheet data: ", JSON.stringify(updatedSheetData))
+                let updatedSheetData = addEasyCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
+                console.log("updated Sheet data: ", JSON.stringify(updatedSheetData, null, 2))
 
                 if (brMedianPercentile && prMedianPercentile) {
-                    res.json({ testName, gradeLevel, season, basicReadingMedian, profReadingMedian, brMedianPercentile, prMedianPercentile, basicReadingScores, profReadingScores, brPercentiles, prPercentiles });
+                    res.json({ testName, gradeLevel, season, basicReadingMedian, profReadingMedian, brMedianPercentile, prMedianPercentile, brPercentiles, prPercentiles });
                 } else if (brMedianPercentile && !prMedianPercentile) {
                     res.json({ testName, gradeLevel, season, basicReadingMedian, brMedianPercentile, basicReadingScores, brPercentiles });
                 } else if (prMedianPercentile && !brMedianPercentile) {
@@ -83,26 +85,26 @@ app.post('/upload', upload.single('file'), (req, res) => {
             }
 
             if (testName === "Fastbridge") {
-                console.log('inside Fastbridge process')
-                const fbPercentiles = [1,99];
+                // console.log('inside Fastbridge process')
+                // const fbPercentiles = [1,99];
 
-                // if the grade level is kindergarten, get aReading and earlyReading scores for Fastbridge lookup tables
-                if (gradeLevel === 0) {
-                    console.log('inside KG process')
-                    let aReadingScores = sheetData.map(row => row['aReading']).filter(score => score !== undefined); // save aReading scores in an array
-                    let earlyReadingScores = sheetData.map(row => row['earlyReading']).filter(score => score !== undefined); // save earlyReadingScores
+                // // if the grade level is kindergarten, get aReading and earlyReading scores for Fastbridge lookup tables
+                // if (gradeLevel === 0) {
+                //     console.log('inside KG process')
+                //     let aReadingScores = sheetData.map(row => row['aReading']).filter(score => score !== undefined); // save aReading scores in an array
+                //     let earlyReadingScores = sheetData.map(row => row['earlyReading']).filter(score => score !== undefined); // save earlyReadingScores
                     
-                    const aReadingMedian = getMedian(aReadingScores) // get aReading median score
-                    const earlyReadingMedian = getMedian(earlyReadingScores) // get earlyReading median score
+                //     const aReadingMedian = getMedian(aReadingScores) // get aReading median score
+                //     const earlyReadingMedian = getMedian(earlyReadingScores) // get earlyReading median score
                     
-                    const aReadingMedPercentile = getPercentile(testName, aReadingMedian, gradeLevel, season, aReadingLookup) // get aReading median percentile
-                    const earlyReadingMedPercentile = getPercentile(testName, earlyReadingMedian, gradeLevel, season, earlyReadingLookup) // get earlyReading median percentile
-                    console.log(JSON.stringify({ aReadingScores, earlyReadingScores, aReadingMedian, earlyReadingMedian, aReadingMedPercentile, earlyReadingMedPercentile}))
+                //     const aReadingMedPercentile = getEasyCBMPercentile(testName, aReadingMedian, gradeLevel, season, aReadingLookup) // get aReading median percentile
+                //     const earlyReadingMedPercentile = getEasyCBMPercentile(testName, earlyReadingMedian, gradeLevel, season, earlyReadingLookup) // get earlyReading median percentile
+                //     console.log(JSON.stringify({ aReadingScores, earlyReadingScores, aReadingMedian, earlyReadingMedian, aReadingMedPercentile, earlyReadingMedPercentile}))
 
-                    if (aReadingMedPercentile && earlyReadingMedPercentile) {
-                        res.json({ testName, gradeLevel, season, aReadingScores, earlyReadingScores, aReadingMedian, earlyReadingMedian, aReadingMedPercentile, earlyReadingMedPercentile })
-                    }
-                }
+                //     if (aReadingMedPercentile && earlyReadingMedPercentile) {
+                //         res.json({ testName, gradeLevel, season, aReadingScores, earlyReadingScores, aReadingMedian, earlyReadingMedian, aReadingMedPercentile, earlyReadingMedPercentile })
+                //     }
+                // }
             }
 
     

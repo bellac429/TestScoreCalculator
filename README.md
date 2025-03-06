@@ -13,9 +13,14 @@ User Documentation:
 * Add auto width to form inputs maybe
 
 ### Backend
-* write get ScaleScore range function for fastbridge test to send ranges to backend
+
+# Fix updated sheet data function or create new function for generating graph data for frontend
 
 
 ### Notes for Meeting
+
+
+Change functions to round scores before computing results
+
 - earlyReading only has KG and grade 1 for Fastbridge percentiles
 
