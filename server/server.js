@@ -3,7 +3,7 @@ import express from "express"
 import cors from "cors"
 import multer from "multer"
 import xlsx from "xlsx"
-import { getMedian, addEasyCBMPercentiles, getEasyCBMPercentile } from "./utils.js";
+import { getMedian, getEasyCBMPercentile, getEasyCBMPercentileRange} from "./utils.js";
 import basicReadingLookup from './lookupTables/easyCBM/basicReading.js'
 import profReadingLookup from './lookupTables/easyCBM/profReading.js';
 import aReadingLookup from "./lookupTables/Fastbridge/aReading.js";
@@ -45,42 +45,85 @@ app.post('/upload', upload.single('file'), (req, res) => {
             const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             let sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-            console.log("excel data:", JSON.stringify(sheetData, null, 2))
+            console.log("sheet data:", JSON.stringify(sheetData, null, 2))
 
             // Process easyCBM data with lookup tables in project folder
             if (testName === "easyCBM") {
                 console.log('inside easyCBM process')
-                const brPercentiles = [0,25];
-                let prPercentiles;
-                if (gradeLevel === 2) {
-                    prPercentiles = [0,12]
-                } else { prPercentiles = [0,20] }
+                
+                // all grades exept 2nd are included in basic reading and proficient reading percentile tables
+                if (gradeLevel > 2) { 
+                    const brScoreRange = [0,25];
+                    const prScoreRange = [0,20]
+                    const brPercentileRange = getEasyCBMPercentileRange(gradeLevel, season, basicReadingLookup)
+                    const prPercentileRange = getEasyCBMPercentileRange(gradeLevel, season, profReadingLookup)
 
-                let basicReadingScores = sheetData.map(row => row['Basic Reading']).filter(brscore => brscore !== undefined); // get basic reading scores
-                let profReadingScores = sheetData.map(row => row['Proficient Reading']).filter(prscore => prscore !== undefined); // get proficient reading scores
-                console.log("basic reading scores: ", basicReadingScores, "\n prof reading scores: ", profReadingScores)
+                    // get array of basic reading and proficient reading scores
+                    let basicReadingScores = sheetData.map(row => row['Basic Reading']).filter(brscore => brscore !== undefined);
+                    let profReadingScores = sheetData.map(row => row['Proficient Reading']).filter(prscore => prscore !== undefined);
+                    console.log("basic reading scores: ", basicReadingScores, "\n prof reading scores: ", profReadingScores)
 
-                const basicReadingMedian = getMedian(basicReadingScores)
-                const profReadingMedian = getMedian(profReadingScores)
-                console.log("basic reading median: ", basicReadingMedian, "prof reading median: ", profReadingMedian)
+                    const basicReadingMedian = getMedian(basicReadingScores)
+                    const profReadingMedian = getMedian(profReadingScores)
+                    console.log("basic reading median: ", basicReadingMedian, "prof reading median: ", profReadingMedian)
 
+                    // getCBMPercentile(score, grade, season, lookupTable)
+                    const brMedianPercentile = getEasyCBMPercentile(Math.round(basicReadingMedian), gradeLevel, season, basicReadingLookup)
+                    const prMedianPercentile = getEasyCBMPercentile(Math.round(profReadingMedian), gradeLevel, season, profReadingLookup)
+                    console.log("basic reading median perc: ", brMedianPercentile, "\n prof reading median perc: ", prMedianPercentile)
 
-                // getCBMPercentile(score, grade, season, lookupTable)
-                const brMedianPercentile = getEasyCBMPercentile(Math.round(basicReadingMedian), gradeLevel, season, basicReadingLookup)
-                const prMedianPercentile = getEasyCBMPercentile(Math.round(profReadingMedian), gradeLevel, season, profReadingLookup)
-                console.log("basic reading median perc: ", brMedianPercentile, "\n prof reading median perc: ", prMedianPercentile)
+                    // get chart data to be graphed in frontend
+                    const brChartData = sheetData.map(item => {
+                        const basicReadingScore = item["Basic Reading"]; // Ensure the key exists
+                        if (basicReadingScore > 12) {return} 
+                        return {
+                          User: item.User ?? "Unknown",  // Handle possible missing values
+                          brScore: basicReadingScore ?? 0,   // Default to 0 if undefined
+                          percentile: getEasyCBMPercentile(Math.round(basicReadingScore), gradeLevel, season, basicReadingLookup) ?? 0
+                        };
+                    });
 
-                // add percentiles to sheet data if needed:
-                let updatedSheetData = addEasyCBMPercentiles(sheetData, basicReadingLookup, profReadingLookup, gradeLevel, season);
-                console.log("updated Sheet data: ", JSON.stringify(updatedSheetData, null, 2))
+                    const prChartData = sheetData.map(item => {
+                        const profReadingScore = item["Proficient Reading"]; // Ensure the key exists
+                        if (profReadingScore > 20) {return} 
+                        return {
+                          User: item.User ?? "Unknown",  // Handle possible missing values
+                          prScore: profReadingScore ?? 0,   // Default to 0 if undefined
+                          percentile: getEasyCBMPercentile(Math.round(profReadingScore), gradeLevel, season, profReadingLookup) ?? 0
+                        };
+                    });
 
-                if (brMedianPercentile && prMedianPercentile) {
-                    res.json({ testName, gradeLevel, season, basicReadingMedian, profReadingMedian, brMedianPercentile, prMedianPercentile, brPercentiles, prPercentiles });
-                } else if (brMedianPercentile && !prMedianPercentile) {
-                    res.json({ testName, gradeLevel, season, basicReadingMedian, brMedianPercentile, basicReadingScores, brPercentiles });
-                } else if (prMedianPercentile && !brMedianPercentile) {
-                    res.json({ testName, gradeLevel, season, profReadingMedian, prMedianPercentile, profReadingScores, prPercentiles });
-                } 
+                    if (brMedianPercentile && prMedianPercentile) {
+                        res.json({ testName, gradeLevel, season, basicReadingMedian, profReadingMedian, brMedianPercentile, prMedianPercentile, brScoreRange, prScoreRange, brChartData, prChartData, brPercentileRange, prPercentileRange });
+                    } else if (brMedianPercentile && !prMedianPercentile) {
+                        res.json({ testName, gradeLevel, season, basicReadingMedian, brMedianPercentile, basicReadingScores, brScoreRange, brChartData, brPercentileRange });
+                    } else if (prMedianPercentile && !brMedianPercentile) {
+                        res.json({ testName, gradeLevel, season, profReadingMedian, prMedianPercentile, profReadingScores, prScoreRange, prChartData, prPercentileRange });
+                    } 
+
+                } else { // if analyzing 2nd grade, don't need to create brChartData
+                    const prScoreRange = [0,12]
+
+                    let profReadingScores = sheetData.map(row => row['Proficient Reading']).filter(prscore => prscore !== undefined);
+                    const profReadingMedian = getMedian(profReadingScores)
+                    //console.log('profReadingMedian: ', profReadingMedian)
+                    const prMedianPercentile = getEasyCBMPercentile(Math.round(profReadingMedian), gradeLevel, season, profReadingLookup)
+                    
+                    const prChartData = sheetData.map(item => {
+                        const profReadingScore = item["Proficient Reading"]; // Ensure the key exists
+                        if (profReadingScore > 12) {return} 
+                        return {
+                          User: item.User ?? "Unknown",  // Handle possible missing values
+                          prScore: profReadingScore ?? 0,   // Default to 0 if undefined
+                          percentile: getEasyCBMPercentile(Math.round(profReadingScore), gradeLevel, season, profReadingLookup) ?? 0
+                        };
+                    });
+
+                    if (prMedianPercentile) {
+                        res.json({ testName, gradeLevel, season, profReadingMedian, prMedianPercentile, profReadingScores, prScoreRange, prChartData });
+                    } 
+                }
+
 
             }
 

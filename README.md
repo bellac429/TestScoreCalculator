@@ -14,6 +14,8 @@ User Documentation:
 
 ### Backend
 
+Change line graph to score distribution, not percentile distribution
+
 # Fix updated sheet data function or create new function for generating graph data for frontend
 
 

@@ -40,8 +40,8 @@ const profReadingLookup = {
               [16, 95, 99, 77],
               [17, 98, 99, 85],
               [18, 99, 99, 93],
-              [19, 99, , 98],      // null value
-              [20, 99, , 99]       // null value
+              [19, 99, 99, 98],      // null value
+              [20, 99, 99, 99]       // null value
        ],
        4: [
               [0, 0, 0, 0],
@@ -156,7 +156,7 @@ const profReadingLookup = {
               [17, 93, 98, 97],
               [18, 98, 99, 99],
               [19, 99, 99, 99],
-              [20, 99, , 99] // null value
+              [20, 99, 99, 99] // null value
        ]
 
 }

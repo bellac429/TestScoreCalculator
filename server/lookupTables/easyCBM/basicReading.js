@@ -1,5 +1,5 @@
 /* Basic Reading Lookup Tables from easyCBM Detailed Percentile PDF */
-
+// Grades 3-8
 /*     |_______|_______Percentile______|
        | Score | Fall | Winter | Spring|
 */

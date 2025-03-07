@@ -1,6 +1,6 @@
 import React from "react"
 //import PercentileChart from "./percentileChart";
-import PercentilesLine from "./PercentilesLine"
+import ScoreDistributionLine from "./ScoreDistributionLine"
 
 const EasyCBMSection = ( {data} ) => {
 
@@ -15,7 +15,7 @@ const EasyCBMSection = ( {data} ) => {
                     <li>Median Percentile: {data.brMedianPercentile}</li>
                 </ul>
 
-                <PercentilesLine medianPercentile={data.brMedianPercentile} percentiles={data.brPercentiles}/>
+                <ScoreDistributionLine medianScore={data.basicReadingMedian} percentiles={data.brScoreRange}/>
 
             </section>}
             
@@ -28,7 +28,7 @@ const EasyCBMSection = ( {data} ) => {
                     <li>Median Percentile: {data.prMedianPercentile}</li>
                 </ul>
 
-                <PercentilesLine medianPercentile={data.prMedianPercentile} percentiles={data.prPercentiles}/>
+                <ScoreDistributionLine medianScore={data.profReadingMedian} percentiles={data.prScoreRange}/>
 
             </section>}
             

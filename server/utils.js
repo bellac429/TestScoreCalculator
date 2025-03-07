@@ -4,16 +4,7 @@ import aReadingLookup from './lookupTables/Fastbridge/aReading.js';
 import cbmReadingLookup from './lookupTables/Fastbridge/cbmReading.js';
 import earlyReadingLookup from './lookupTables/Fastbridge/earlyReading.js';
 
-
-export function prettyPrintJSON(jsonData) {
-    try {
-      const prettyJSON = JSON.stringify(jsonData, null, 2); // null and 2 are for spacing
-      console.log(prettyJSON);
-    } catch (error) {
-      console.error("Error: Invalid JSON data", error);
-    }
-}
-
+// gets the median out of an array of scores
 export function getMedian(scores) {
     if (!Array.isArray(scores) || scores.length === 0) {
       return null; // Handle empty or non-array input
@@ -45,33 +36,11 @@ export function getEasyCBMPercentile(score, grade, season, lookupTable) {
     const gradeTable = lookupTable[grade];
 
     return gradeTable[score][seasonIndex] ?? null; 
-    
 }
-
-// Function to process the sheet data and add percentiles based on lookup tables
-export function addEasyCBMPercentiles(sheetData, brLookupTable, prLookupTable, grade, season) {
-    return sheetData.map(entry => ({
-        ...entry,
-        "brPercentile": getEasyCBMPercentile(entry["Basic Reading"], grade, season, brLookupTable),
-        "prPercentile": getEasyCBMPercentile(entry["Proficient Reading"], grade, season, prLookupTable)
-    }));
-}
-// Example usage
-// const season = "Fall"; // Change to "Winter" or "Spring" as needed
-// const updatedSheetData = addPercentiles(sheetData, basicReadingLookup, season);
-// console.log(updatedSheetData);
-
-
-
-
-
-
-
-
 
 
 // Function to get the range of scale scores from a given test, season, and grade level
-export function getRange(testName, grade, season, lookupTable) {
+export function getEasyCBMPercentileRange(grade, season, lookupTable) {
     const seasonIndex = { fall: 1, winter: 2, spring: 3 }[season.toLowerCase()];
     if (seasonIndex === undefined) {
         throw new Error("Invalid season. Use 'fall', 'winter', or 'spring'.");
@@ -84,6 +53,8 @@ export function getRange(testName, grade, season, lookupTable) {
     const lastScore = gradeTable[gradeTable.length - 1][seasonIndex]
 
     const range = [firstScore, lastScore]
+    console.log("percentile range: ", range)
+    return range
 }
 
 
@@ -107,3 +78,16 @@ const lookupTable = `
 
 // console.log(formattedArray.join('\n'));
 
+/* Functions ended up not using
+
+// Function to process the sheet data and add percentiles based on lookup tables
+export function addEasyCBMPercentiles(sheetData, brLookupTable, prLookupTable, grade, season) {
+    return sheetData.map(entry => ({
+        ...entry,
+        "brPercentile": getEasyCBMPercentile(entry["Basic Reading"], grade, season, brLookupTable),
+        "prPercentile": getEasyCBMPercentile(entry["Proficient Reading"], grade, season, prLookupTable)
+    }));
+}
+
+
+*/
