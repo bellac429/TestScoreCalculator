@@ -15,10 +15,13 @@ const ResultsPage = () => {
     return ( 
         <div className="app">
             <div className='results-container'> 
+
                 <header>
                     <img src={IRRCimg} alt='Iowa Reading Research Center Image' height={60} width={300}/>   
                 </header>
+
                 <main>
+
                     <h1 className='hero'>Your classroom's results</h1>
                     {(data) ? (
                         <>
@@ -38,6 +41,7 @@ const ResultsPage = () => {
                     
                     <button onClick={reset} style={{ marginTop: "3rem" }} >Back</button>
                 </main>
+                
             </div>   
         </div>
     );
